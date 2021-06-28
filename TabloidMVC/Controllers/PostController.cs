@@ -26,6 +26,13 @@ namespace TabloidMVC.Controllers
             return View(posts);
         }
 
+        public IActionResult MyPosts()
+        {
+            int userId = GetCurrentUserProfileId();
+            var myposts = _postRepository.GetAllPublishedPostsByUser( userId);
+            return View(myposts);
+        }
+
         public IActionResult Details(int id)
         {
             var post = _postRepository.GetPublishedPostById(id);
