@@ -71,7 +71,8 @@ namespace TabloidMVC.Repositories
                               LEFT JOIN Category c ON p.CategoryId = c.id
                               LEFT JOIN UserProfile u ON p.UserProfileId = u.id
                               LEFT JOIN UserType ut ON u.UserTypeId = ut.id
-                        WHERE IsApproved = 1 AND PublishDateTime < SYSDATETIME() AND p.UserProfileId = @userId";
+                        WHERE IsApproved = 1 AND PublishDateTime < SYSDATETIME() AND p.UserProfileId = @userId
+                        ORDER BY PublishDateTime DESC";
                     cmd.Parameters.AddWithValue("@userid", userProfileId);
 
                     var reader = cmd.ExecuteReader();
@@ -203,6 +204,25 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
+
+
+        public void DeletePost(int Id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                            DELETE FROM Post
+                            WHERE Id = @id
+                        ";
+                    cmd.Parameters.AddWithValue("@id", Id);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
 
         private Post NewPostFromReader(SqlDataReader reader)
         {
