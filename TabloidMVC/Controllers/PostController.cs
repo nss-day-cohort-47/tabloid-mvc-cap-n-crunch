@@ -105,6 +105,33 @@ namespace TabloidMVC.Controllers
             }
         }
 
+        public IActionResult Edit(int id)
+        {
+            Post post= _postRepository.GetPublishedPostById(id);
+            int userId = GetCurrentUserProfileId();
+            if (post == null || userId != post.UserProfileId)
+            {
+                return NotFound();
+            }
+            return View(post);
+        }
+        // POST: DogsController/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(int id, Post post)
+        {
+            //try
+            //{
+                post.UserProfileId = GetCurrentUserProfileId();
+                _postRepository.UpdatePost(post);
+                return RedirectToAction("Index");
+            //}
+            //catch (Exception ex)
+            //{
+            //    return View(post);
+            //}
+        }
+
         private int GetCurrentUserProfileId()
         {
             string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
