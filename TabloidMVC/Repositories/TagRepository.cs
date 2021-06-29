@@ -1,42 +1,48 @@
-﻿using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using TabloidMVC.Models;
 
 namespace TabloidMVC.Repositories
 {
-    public class CategoryRepository : BaseRepository, ICategoryRepository
+    public class TagRepository : BaseRepository, ITagRepository
     {
-        public CategoryRepository(IConfiguration config) : base(config) { }
-        public List<Category> GetAll()
+        public TagRepository(IConfiguration config) : base(config) { }
+
+        public List<Tag> GetAllTags()
         {
             using (var conn = Connection)
             {
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = "SELECT id, name FROM Category order by name";
+                    cmd.CommandText = "SELECT Id, Name From Tag Order By Name";
+
                     var reader = cmd.ExecuteReader();
 
-                    var categories = new List<Category>();
+                    var tags = new List<Tag>();
 
                     while (reader.Read())
                     {
-                        categories.Add(new Category()
+                        tags.Add(new Tag()
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            Name = reader.GetString(reader.GetOrdinal("name")),
-                        });
+                            Name = reader.GetString(reader.GetOrdinal("Name")),
+                        }
+                            );
                     }
 
                     reader.Close();
 
-                    return categories;
+                    return tags;
                 }
             }
         }
 
-        public Category GetCategoryById(int id)
+        public Tag GetTagById(int id)
         {
             using (SqlConnection conn = Connection)
             {
@@ -44,9 +50,9 @@ namespace TabloidMVC.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                          SELECT  c.name
-                            from Category c 
-                              where c.id = @id";
+                          SELECT  t.name
+                            from Tag t 
+                              where t.id = @id";
 
                     cmd.Parameters.AddWithValue("@id", id);
 
@@ -54,14 +60,14 @@ namespace TabloidMVC.Repositories
 
                     if (reader.Read())
                     {
-                        Category category = new Category
+                        Tag tag = new Tag
                         {
                             Id = id,
                             Name = reader.GetString(reader.GetOrdinal("Name"))
                         };
 
                         reader.Close();
-                        return category;
+                        return tag;
                     }
                     else
                     {
@@ -72,49 +78,28 @@ namespace TabloidMVC.Repositories
             }
         }
 
-        public void AddCategory(Category category)
+        public void AddTag(Tag tag)
         {
-            using (SqlConnection conn = Connection)
+            using (var conn = Connection)
             {
                 conn.Open();
-                using (SqlCommand cmd = conn.CreateCommand())
+                using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                    INSERT INTO Category ([Name])
-                    OUTPUT INSERTED.ID
-                    VALUES (@name);
-                ";
+                        INSERT INTO Tag (
+                            Name )
+                        OUTPUT INSERTED.ID
+                        VALUES (
+                            @Name )";
+                    cmd.Parameters.AddWithValue("@Name", tag.Name);
+                   
 
-                    cmd.Parameters.AddWithValue("@name", category.Name);
-                
-
-                    int id = (int)cmd.ExecuteScalar();
-
-                    category.Id = id;
+                    tag.Id = (int)cmd.ExecuteScalar();
                 }
             }
         }
 
-        public void UpdateCategory(Category category)
-        {
-            using (SqlConnection conn = Connection)
-            {
-                conn.Open();
-                using (SqlCommand cmd = conn.CreateCommand())
-                {
-                    cmd.CommandText = @"
-                            UPDATE category
-                            SET 
-                                Name = @name
-                            WHERE Id = @id";
-                    cmd.Parameters.AddWithValue("@name", category.Name);
-                    cmd.Parameters.AddWithValue("@id", category.Id);
-                    cmd.ExecuteNonQuery();
-                }
-            }
-        }
-
-        public void DeleteCategory(int id)
+        public void DeleteTag(int id)
         {
             using (SqlConnection conn = Connection)
             {
@@ -123,7 +108,7 @@ namespace TabloidMVC.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                            DELETE FROM Category
+                            DELETE FROM Tag
                             WHERE Id = @id
                         ";
 
@@ -133,6 +118,23 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
-
+        public void UpdateTag(Tag tag)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                            UPDATE Tag
+                            SET 
+                                Name = @name
+                            WHERE Id = @id";
+                    cmd.Parameters.AddWithValue("@name", tag.Name);
+                    cmd.Parameters.AddWithValue("@id", tag.Id);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
     }
 }
