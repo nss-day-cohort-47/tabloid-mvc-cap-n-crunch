@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TabloidMVC.Models;
 using TabloidMVC.Repositories;
 
 namespace TabloidMVC.Controllers
@@ -13,7 +14,7 @@ namespace TabloidMVC.Controllers
 
         private readonly IUserProfileRepository _userProfileRepository;
 
-        public UserProfileRepository(IUserProfileRepository userProfileRepository)
+        public UserProfileController(IUserProfileRepository userProfileRepository)
         {
             _userProfileRepository = userProfileRepository;
         }
@@ -22,8 +23,8 @@ namespace TabloidMVC.Controllers
         // GET: UserProfileController
         public IActionResult Index()
         {
-            var userProfile = _userProfileRepository.GetByEmail();
-            return View(userProfile);
+            List<UserProfile> userProfiles = _userProfileRepository.GetAllProfiles();
+            return View(userProfiles);
         }
 
         // GET: UserProfileController/Details/5
