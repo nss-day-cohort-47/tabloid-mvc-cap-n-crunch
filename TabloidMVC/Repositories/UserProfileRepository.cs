@@ -66,7 +66,8 @@ namespace TabloidMVC.Repositories
                        SELECT u.id, u.FirstName, u.LastName, u.DisplayName, u.UserTypeId,
                               ut.[Name] AS UserTypeName
                          FROM UserProfile u
-                              LEFT JOIN UserType ut ON u.UserTypeId = ut.id";
+                              LEFT JOIN UserType ut ON u.UserTypeId = ut.id
+                               ORDER BY FirstName";
                     var reader = cmd.ExecuteReader();
 
                     List<UserProfile> userProfiles = new List<UserProfile>();

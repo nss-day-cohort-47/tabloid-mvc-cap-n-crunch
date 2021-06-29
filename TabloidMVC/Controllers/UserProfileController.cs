@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using TabloidMVC.Repositories;
 
 namespace TabloidMVC.Controllers
 {
+    //[Authorize]
     public class UserProfileController : Controller
     {
 
@@ -21,6 +23,7 @@ namespace TabloidMVC.Controllers
 
 
         // GET: UserProfileController
+        //[Authorize]
         public IActionResult Index()
         {
             List<UserProfile> userProfiles = _userProfileRepository.GetAllProfiles();
