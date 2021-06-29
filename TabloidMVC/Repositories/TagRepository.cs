@@ -42,41 +42,7 @@ namespace TabloidMVC.Repositories
             }
         }
 
-        public Tag GetTagById(int id)
-        {
-            using (SqlConnection conn = Connection)
-            {
-                conn.Open();
-                using (SqlCommand cmd = conn.CreateCommand())
-                {
-                    cmd.CommandText = @"
-                          SELECT  t.name
-                            from Tag t 
-                              where t.id = @id";
 
-                    cmd.Parameters.AddWithValue("@id", id);
-
-                    SqlDataReader reader = cmd.ExecuteReader();
-
-                    if (reader.Read())
-                    {
-                        Tag tag = new Tag
-                        {
-                            Id = id,
-                            Name = reader.GetString(reader.GetOrdinal("Name"))
-                        };
-
-                        reader.Close();
-                        return tag;
-                    }
-                    else
-                    {
-                        reader.Close();
-                        return null;
-                    }
-                }
-            }
-        }
 
         public void AddTag(Tag tag)
         {
@@ -95,6 +61,24 @@ namespace TabloidMVC.Repositories
                    
 
                     tag.Id = (int)cmd.ExecuteScalar();
+                }
+            }
+        }
+        public void UpdateTag(Tag tag)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                            UPDATE Tag
+                            SET 
+                                Name = @name
+                            WHERE Id = @id";
+                    cmd.Parameters.AddWithValue("@name", tag.Name);
+                    cmd.Parameters.AddWithValue("@id", tag.Id);
+                    cmd.ExecuteNonQuery();
                 }
             }
         }
