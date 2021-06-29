@@ -65,33 +65,35 @@ namespace TabloidMVC.Controllers
 
         }
 
-        //        public IActionResult Delete(int id)
-        //        {
-        //            Post post = _postRepository.GetPublishedPostById(id);
-        //            if (post.UserProfileId == GetCurrentUserProfileId())
-        //            {
-        //                return View(post);
-        //            }
-        //            else
-        //            {
-        //                return Unauthorized();
-        //            }
-        //        }
+        //GET
+        public IActionResult Delete(int id)
+        {
+            Category category = _categoryRepository.GetCategoryById(id);
+            //if (isAdmin == true)
+            //{
+                return View(category);
+            //}
+            //else
+            //{
+            //    return Unauthorized();
+            //}
+        }
 
-        //        [HttpPost]
-        //        [ValidateAntiForgeryToken]
-        //        public IActionResult Delete(int id, Post post)
-        //        {
-        //            try
-        //            {
-        //                _postRepository.DeletePost(id);
-        //                return RedirectToAction("Index");
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                return View(post);
-        //            }
-        //        }
+        //POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(int id, Category category)
+        {
+            try
+            {
+                _categoryRepository.DeleteCategory(id);
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                return View(category);
+            }
+        }
 
         //        public IActionResult Edit(int id)
         //        {
