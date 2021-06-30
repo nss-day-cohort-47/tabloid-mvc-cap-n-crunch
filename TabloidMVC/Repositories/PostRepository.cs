@@ -109,11 +109,15 @@ namespace TabloidMVC.Repositories
                               u.FirstName, u.LastName, u.DisplayName, 
                               u.Email, u.CreateDateTime, u.ImageLocation AS AvatarImage,
                               u.UserTypeId, 
-                              ut.[Name] AS UserTypeName
+                              ut.[Name] AS UserTypeName,
+                              pt.id, pt.tagId,
+                              t.id, t.[Name]
                          FROM Post p
                               LEFT JOIN Category c ON p.CategoryId = c.id
                               LEFT JOIN UserProfile u ON p.UserProfileId = u.id
                               LEFT JOIN UserType ut ON u.UserTypeId = ut.id
+                              LEFT JOIN PostTag pt ON p.id = pt.postId
+                              LEFT JOIN Tag t ON pt.tagId = t.id
                         WHERE IsApproved = 1 AND PublishDateTime < SYSDATETIME()
                               AND p.id = @id";
 
@@ -300,5 +304,66 @@ namespace TabloidMVC.Repositories
                 }
             };
         }
+
+        public void AddPostTag(int postId, int tagId)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        INSERT INTO PostTag (
+                            PostId, TagId)
+                        OUTPUT INSERTED.ID
+                        VALUES (
+                            @PostId, @TagId)";
+                    cmd.Parameters.AddWithValue("@PostId", postId);
+                    cmd.Parameters.AddWithValue("@TagId", tagId);
+                    
+
+                    //postTag.Id = (int)cmd.ExecuteScalar();
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public List<PostTag> GetPostTagsByPostId(int postId)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                       SELECT pt.Id, pt.PostId, pt.TagId
+                            FROM PostTag pt
+                            WHERE @id = pt.PostId";
+
+                    cmd.Parameters.AddWithValue("@id", postId);
+                   
+                    var reader = cmd.ExecuteReader();
+
+                    List<PostTag> postTags = new List<PostTag>();
+
+                    while (reader.Read())
+                    {
+                       postTags.Add(new PostTag()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            PostId = reader.GetInt32(reader.GetOrdinal("PostId")),
+                           TagId = reader.GetInt32(reader.GetOrdinal("TagId"))
+                       }
+                        );
+
+                    }
+                    reader.Close();
+                    return postTags;
+                }
+            }
+            }
+        }
     }
-}
+
+
+

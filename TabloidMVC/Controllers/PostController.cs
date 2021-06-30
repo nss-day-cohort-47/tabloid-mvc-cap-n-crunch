@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualBasic;
 using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using TabloidMVC.Models;
 using TabloidMVC.Models.ViewModels;
@@ -15,11 +16,15 @@ namespace TabloidMVC.Controllers
     {
         private readonly IPostRepository _postRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly ITagRepository _tagRepository;
 
-        public PostController(IPostRepository postRepository, ICategoryRepository categoryRepository)
+        public PostController(IPostRepository postRepository,
+            ICategoryRepository categoryRepository,
+            ITagRepository tagRepository)
         {
             _postRepository = postRepository;
             _categoryRepository = categoryRepository;
+            _tagRepository = tagRepository;
         }
 
         public IActionResult Index()
@@ -34,7 +39,10 @@ namespace TabloidMVC.Controllers
             var myposts = _postRepository.GetAllPublishedPostsByUser( userId);
             return View(myposts);
         }
-
+        //Need data for posts and tags
+        //Tags has to be a list of tags associated with the post
+        //Create a View model with post info and a list of Tags
+        //Add the view model to the Details controller
         public IActionResult Details(int id)
         {
             var post = _postRepository.GetPublishedPostById(id);
@@ -47,7 +55,15 @@ namespace TabloidMVC.Controllers
                     return NotFound();
                 }
             }
-            return View(post);
+            var tags = _tagRepository.GetTagsByPostId(id);
+
+            PostTagDetailViewModel vm = new PostTagDetailViewModel
+            {
+                Post = post,
+                Tags = tags
+            };
+
+            return View(vm);
         }
 
         public IActionResult Create()
@@ -137,5 +153,53 @@ namespace TabloidMVC.Controllers
             string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return int.Parse(id);
         }
+        // Get 
+        public IActionResult AddTagToPost(int id)
+        {
+            var tags = _tagRepository.GetAllTags();
+            PostTagFormViewModel vm = new PostTagFormViewModel()
+            {
+                postId = id,
+                TagOptions = tags,
+                TagIds = new List<int>()
+            };
+            return View(vm);
+        }
+
+        [HttpPost]
+        //POST
+        public IActionResult AddTagToPost(int id, List<int> tagIds )
+        {
+             var postTagIds = _postRepository.GetPostTagsByPostId(id);
+            List<int> tags = new List<int>();
+            foreach (var postTagId in postTagIds)
+            {
+                tags.Add(postTagId.TagId);
+            
+            }
+            foreach (var tagId in tagIds)
+            {
+                if (tags.Contains(tagId))
+                {
+                    continue;
+                }
+                else 
+                { 
+                    _postRepository.AddPostTag(id, tagId);
+
+                }
+                
+            }
+            //int userId = GetCurrentUserProfileId();
+            //var post = _postRepository.GetUserPostById(id, userId);
+            //if (post == null)
+            //{
+            //    return NotFound();
+            //}
+            return RedirectToAction($"Details", new {id});
+           
+
+        }
+
     }
 }
