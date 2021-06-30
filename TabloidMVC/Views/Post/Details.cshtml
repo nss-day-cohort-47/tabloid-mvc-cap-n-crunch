@@ -16,7 +16,10 @@
                 <p class="text-black-50">Published on @Html.DisplayFor(model => model.Post.PublishDateTime)</p>
             </div>
             <div class="row">
+                <a asp-controller="Comment" asp-action="Create" asp-route-id="@Model.Post.Id" class="btn btn-outline-primary mx-1" title="Comments">
 
+                    <i class="fas fa-comment"></i>
+                </a>
                 <a asp-action="Edit" asp-route-id="@Model.Post.Id" class="btn btn-outline-primary mx-1" title="Edit">
 
                     <i class="fas fa-pencil-alt"></i>
