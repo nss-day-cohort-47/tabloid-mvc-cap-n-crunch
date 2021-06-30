@@ -4,11 +4,11 @@
     ViewData["Title"] = "AddTagToPost";
 }
 <div class="container pt-5">
-    <h1>AddTagToPost</h1>
+    <h1>Add Tag To Post</h1>
 
-    <p>
+    @*<p>
         <a class="btn btn-primary" asp-action="Create">New Post</a>
-    </p>
+    </p>*@
             <form method="post">
     <table class="table table-striped">
         <thead>
@@ -26,7 +26,7 @@
                     <td>
 
                         @*@Html.DisplayFor(modelItem => item.Name)*@
-                        <input name="TagId" type="checkbox" value="@item.Name" /> @item.Name
+                        <input name="TagIds" type="checkbox" value="@item.Id" /> @item.Name
 
                     </td>
                     <td>

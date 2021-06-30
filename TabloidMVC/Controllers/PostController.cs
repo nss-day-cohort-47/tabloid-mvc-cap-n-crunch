@@ -149,21 +149,22 @@ namespace TabloidMVC.Controllers
             PostTagFormViewModel vm = new PostTagFormViewModel()
             {
                 postId = id,
-                TagOptions = tags
+                TagOptions = tags,
+                TagIds = new List<int>()
             };
             return View(vm);
         }
 
         [HttpPost]
-
-        public IActionResult AddTagToPost(int postId, List<int> tagIds )
+        //POST
+        public IActionResult AddTagToPost(int id, List<int> tagIds )
         {
             foreach (var tagId in tagIds)
             {
-                _postRepository.AddPostTag(postId, tagId);
+                _postRepository.AddPostTag(id, tagId);
                 
             }
-            return View("Index");
+            return View("Details");
            
 
         }
