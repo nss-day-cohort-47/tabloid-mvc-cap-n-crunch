@@ -31,9 +31,19 @@ namespace TabloidMVC.Controllers
         }
 
         // GET: UserProfileController/Details/5
-        public ActionResult Details(int id)
+        public IActionResult Details(int id)
         {
-            return View();
+            var userProfile = _userProfileRepository.GetUserById(id);
+            if (userProfile == null)
+            {
+                //int userId = GetCurrentUserProfileId();
+                userProfile = _userProfileRepository.GetUserById(id);
+                if (userProfile == null)
+                {
+                    return NotFound();
+                }
+            }
+            return View(userProfile);
         }
 
         // GET: UserProfileController/Create

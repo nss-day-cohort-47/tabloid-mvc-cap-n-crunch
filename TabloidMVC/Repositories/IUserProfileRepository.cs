@@ -7,6 +7,8 @@ namespace TabloidMVC.Repositories
     {
         UserProfile GetByEmail(string email);
 
+        UserProfile GetUserById(int id);
+
         List<UserProfile> GetAllProfiles();
     }
 }
