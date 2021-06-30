@@ -16,16 +16,9 @@
                 <p class="text-black-50">Published on @Html.DisplayFor(model => model.Post.PublishDateTime)</p>
             </div>
             <div class="row">
-<<<<<<<<< Temporary merge branch 1
+
                 <a asp-action="Edit" asp-route-id="@Model.Post.Id" class="btn btn-outline-primary mx-1" title="Edit">
-=========
-                <a asp-controller="Comment"asp-action="Index" asp-route-id="@Model.Id" class="btn btn-outline-primary mx-1" title="View Comments">
-                    <i class="fas fa-pencil-alt"></i>
-                </a>
-                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary mx-1" title="Edit">
-=======
-                <a asp-action="Edit" asp-route-id="@Model.Post.Id" class="btn btn-outline-primary mx-1" title="Edit">
->>>>>>> 5602fedf8be27bcbdf46038d9cbb89410f9f7ad3
+
                     <i class="fas fa-pencil-alt"></i>
                 </a>
                 <a asp-action="Delete" asp-route-id="@Model.Post.Id" class="btn btn-outline-primary mx-1" title="Delete">
