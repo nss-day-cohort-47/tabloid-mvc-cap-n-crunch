@@ -39,7 +39,10 @@ namespace TabloidMVC.Controllers
             var myposts = _postRepository.GetAllPublishedPostsByUser( userId);
             return View(myposts);
         }
-
+        //Need data for posts and tags
+        //Tags has to be a list of tags associated with the post
+        //Create a View model with post info and a list of Tags
+        //Add the view model to the Details controller
         public IActionResult Details(int id)
         {
             var post = _postRepository.GetPublishedPostById(id);
@@ -52,7 +55,15 @@ namespace TabloidMVC.Controllers
                     return NotFound();
                 }
             }
-            return View(post);
+            var tags = _tagRepository.GetTagsByPostId(id);
+
+            PostTagDetailViewModel vm = new PostTagDetailViewModel
+            {
+                Post = post,
+                Tags = tags
+            };
+
+            return View(vm);
         }
 
         public IActionResult Create()
