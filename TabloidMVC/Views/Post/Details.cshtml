@@ -25,15 +25,9 @@
                 <a asp-action="AddTagToPost" asp-route-id="@Model.Post.Id" class="btn btn-outline-primary mx-1" title="Manage Tags">
                     <i class="fas fa-tag"></i>
                 </a>
+
             </div>
-            <div>
-                    <ul>
-                @foreach (var tag in Model.Tags)
-                { 
-                        <li>@Html.DisplayFor(modelItem => tag.Name) </li>
-                }
-                    </ul>
-            </div>
+            
         </section>
         <hr />
         @if (!string.IsNullOrWhiteSpace(Model.Post.ImageLocation))
@@ -44,6 +38,15 @@
                 </div>
             </section>
         }
+        <section class="row justify-content-center">
+            <div>
+        @foreach (var tag in Model.Tags)
+        {
+            <i class="fas fa-tag"></i><span title="Tag" class="btn btn-outline-primary mx-1">@Html.DisplayFor(modelItem => tag.Name) </span>
+
+        }
+                </div>
+            </section>
         <section class="row post__content">
             <p class="col-sm-12 mt-5">@Html.DisplayFor(model => model.Post.Content)</p>
         </section>

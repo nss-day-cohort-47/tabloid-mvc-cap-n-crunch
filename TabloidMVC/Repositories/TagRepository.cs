@@ -86,7 +86,7 @@ namespace TabloidMVC.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                          SELECT  t.name, t.id
+                          SELECT Distinct t.name, t.id
                             from Tag t 
                             LEFT JOIN PostTag pt ON t.id = pt.TagId
                             LEFT JOIN Post p ON pt.PostId = p.id
