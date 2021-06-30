@@ -164,7 +164,13 @@ namespace TabloidMVC.Controllers
                 _postRepository.AddPostTag(id, tagId);
                 
             }
-            return View("Details");
+            //int userId = GetCurrentUserProfileId();
+            //var post = _postRepository.GetUserPostById(id, userId);
+            //if (post == null)
+            //{
+            //    return NotFound();
+            //}
+            return RedirectToAction($"Details", new {id});
            
 
         }
