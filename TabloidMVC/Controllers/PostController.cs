@@ -170,9 +170,24 @@ namespace TabloidMVC.Controllers
         //POST
         public IActionResult AddTagToPost(int id, List<int> tagIds )
         {
+             var postTagIds = _postRepository.GetPostTagsByPostId(id);
+            List<int> tags = new List<int>();
+            foreach (var postTagId in postTagIds)
+            {
+                tags.Add(postTagId.TagId);
+            
+            }
             foreach (var tagId in tagIds)
             {
-                _postRepository.AddPostTag(id, tagId);
+                if (tags.Contains(tagId))
+                {
+                    continue;
+                }
+                else 
+                { 
+                    _postRepository.AddPostTag(id, tagId);
+
+                }
                 
             }
             //int userId = GetCurrentUserProfileId();
