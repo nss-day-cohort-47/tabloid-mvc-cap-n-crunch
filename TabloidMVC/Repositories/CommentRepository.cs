@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,7 +48,27 @@ namespace TabloidMVC.Repositories
         }
         public void AddComment(Comment comment)
         {
-            throw new NotImplementedException();
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        INSERT INTO Comment (
+                            PostId, UserProfileId, Subject, content, CreateDateTime
+                            )
+                        VALUES (
+                            @PostId, @UserProfileId, @Subject, @Content, @CreateDateTime 
+                            )";
+                    cmd.Parameters.AddWithValue("@PostId", comment.PostId);
+                    cmd.Parameters.AddWithValue("@UserProfileId", comment.UserProfileID);
+                    cmd.Parameters.AddWithValue("@Subject", (comment.Subject));
+                    cmd.Parameters.AddWithValue("@Content", (comment.Content));
+                    cmd.Parameters.AddWithValue("@CreateDateTime", comment.CreateDateTime);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
     }
 }

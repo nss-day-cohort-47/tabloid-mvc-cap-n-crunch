@@ -4,7 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using TabloidMVC.Models;
+using TabloidMVC.Models.ViewModels;
 using TabloidMVC.Repositories;
 
 namespace TabloidMVC.Controllers
@@ -26,8 +29,10 @@ namespace TabloidMVC.Controllers
         // GET: CommentController
         public ActionResult Index(int id)
         {
-            var comments = _commentRepository.GetAllCommentsByPostId(id);
-            return View(comments);
+            CommentViewModel CVM = new CommentViewModel();
+            CVM.CommentList = _commentRepository.GetAllCommentsByPostId(id);
+            CVM.PostId = id;
+            return View(CVM);
         }
 
         // GET: CommentController/Details/5
@@ -37,23 +42,27 @@ namespace TabloidMVC.Controllers
         }
 
         // GET: CommentController/Create
-        public ActionResult Create()
+        public ActionResult Create(int id)
         {
-            return View();
+            Comment comment = new Comment();
+            comment.PostId = id;
+            comment.UserProfileID = GetCurrentUserProfileId();
+            return View(comment);
         }
 
         // POST: CommentController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(Comment comment)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                _commentRepository.AddComment(comment);
+                return RedirectToAction("Index", new { Id = comment.PostId});
             }
             catch
             {
-                return View();
+                return View(comment);
             }
         }
 
@@ -97,6 +106,11 @@ namespace TabloidMVC.Controllers
             {
                 return View();
             }
+        }
+        private int GetCurrentUserProfileId()
+        {
+            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.Parse(id);
         }
     }
 }
