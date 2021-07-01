@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using TabloidMVC.Models;
 using TabloidMVC.Repositories;
@@ -14,17 +15,28 @@ namespace TabloidMVC.Controllers
 
         private readonly IPostRepository _postRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IUserProfileRepository _userProfileRepository;
 
-        public CategoryController(IPostRepository postRepository, ICategoryRepository categoryRepository)
+        public CategoryController(IPostRepository postRepository, ICategoryRepository categoryRepository, IUserProfileRepository userProfileRepository)
         {
             _postRepository = postRepository;
             _categoryRepository = categoryRepository;
+            _userProfileRepository = userProfileRepository;
         }
 
         public IActionResult Index()
-        {
+        { 
             var categories = _categoryRepository.GetAll();
+            UserProfile user = GetCurrentUser();
+
+            if (user.UserTypeId == 1)
+            {
             return View(categories);
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
 
         //        public IActionResult Details(int id)
@@ -66,17 +78,20 @@ namespace TabloidMVC.Controllers
         }
 
         //GET
+        [Authorize]
         public IActionResult Delete(int id)
         {
+            UserProfile user = GetCurrentUser();
             Category category = _categoryRepository.GetCategoryById(id);
-            //if (isAdmin == true)
-            //{
+
+            if (user.UserTypeId == 1)
+            {
                 return View(category);
-            //}
-            //else
-            //{
-            //    return Unauthorized();
-            //}
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
 
         //POST
@@ -122,12 +137,19 @@ namespace TabloidMVC.Controllers
             //}
         }
 
-        //private int GetCurrentUserProfileId()
-        //{
-        //    string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        //    return int.Parse(id);
-        //}
-    
+        private int GetCurrentUserProfileId()
+        {
+            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.Parse(id);
+        }
+
+        private UserProfile GetCurrentUser()
+        {
+            int currentUserId = GetCurrentUserProfileId();
+            UserProfile user = _userProfileRepository.GetUserById(currentUserId);
+            return user;
+        }
+
 
     }
 }

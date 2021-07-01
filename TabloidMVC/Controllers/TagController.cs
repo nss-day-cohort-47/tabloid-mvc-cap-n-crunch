@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using TabloidMVC.Models;
 using TabloidMVC.Repositories;
@@ -13,18 +14,28 @@ namespace TabloidMVC.Controllers
     {
 
         private readonly ITagRepository _tagRepository;
-        
+        private readonly IUserProfileRepository _userProfileRepository;
 
-        public TagController(ITagRepository tagRepository)
+
+        public TagController(ITagRepository tagRepository, IUserProfileRepository userProfileRepository)
         {
             _tagRepository = tagRepository;
-            
+            _userProfileRepository = userProfileRepository;
+
         }
         // GET: TagController
         public ActionResult Index()
         {
             var tags = _tagRepository.GetAllTags();
-            return View(tags);
+            UserProfile user = GetCurrentUser();
+            if(user.UserTypeId == 1)
+            {
+                return View(tags);
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
 
         //// GET: TagController/Details/5
@@ -106,6 +117,18 @@ namespace TabloidMVC.Controllers
             {
                 return View(tag);
             }
+        }
+        private int GetCurrentUserProfileId()
+        {
+            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.Parse(id);
+        }
+
+        private UserProfile GetCurrentUser()
+        {
+            int currentUserId = GetCurrentUserProfileId();
+            UserProfile user = _userProfileRepository.GetUserById(currentUserId);
+            return user;
         }
     }
 }
