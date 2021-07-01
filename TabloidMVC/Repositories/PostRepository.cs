@@ -12,7 +12,7 @@ namespace TabloidMVC.Repositories
     public class PostRepository : BaseRepository, IPostRepository
     {
         public PostRepository(IConfiguration config) : base(config) { }
-         public List<Post> GetAllPublishedPosts()
+        public List<Post> GetAllPublishedPosts()
         {
             using (var conn = Connection)
             {
@@ -50,7 +50,7 @@ namespace TabloidMVC.Repositories
             }
         }
 
-        public List<Post> GetAllPublishedPostsByUser( int userProfileId)
+        public List<Post> GetAllPublishedPostsByUser(int userProfileId)
         {
             using (var conn = Connection)
             {
@@ -154,7 +154,7 @@ namespace TabloidMVC.Repositories
                                 ImageLocation = @imagelocation,
                                 PublishDateTime = @publishdatetime
                             WHERE Id = @id";
-                    cmd.Parameters.AddWithValue("@title", post.Title );
+                    cmd.Parameters.AddWithValue("@title", post.Title);
                     cmd.Parameters.AddWithValue("@content", post.Content);
                     cmd.Parameters.AddWithValue("@category", post.CategoryId);
                     if (post.ImageLocation != null)
@@ -320,7 +320,7 @@ namespace TabloidMVC.Repositories
                             @PostId, @TagId)";
                     cmd.Parameters.AddWithValue("@PostId", postId);
                     cmd.Parameters.AddWithValue("@TagId", tagId);
-                    
+
 
                     //postTag.Id = (int)cmd.ExecuteScalar();
                     cmd.ExecuteNonQuery();
@@ -341,29 +341,47 @@ namespace TabloidMVC.Repositories
                             WHERE @id = pt.PostId";
 
                     cmd.Parameters.AddWithValue("@id", postId);
-                   
+
                     var reader = cmd.ExecuteReader();
 
                     List<PostTag> postTags = new List<PostTag>();
 
                     while (reader.Read())
                     {
-                       postTags.Add(new PostTag()
+                        postTags.Add(new PostTag()
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             PostId = reader.GetInt32(reader.GetOrdinal("PostId")),
-                           TagId = reader.GetInt32(reader.GetOrdinal("TagId"))
-                       }
-                        );
+                            TagId = reader.GetInt32(reader.GetOrdinal("TagId"))
+                        }
+                         );
 
                     }
                     reader.Close();
                     return postTags;
                 }
             }
+        }
+
+        public void RemovePostTag(int tagId, int postId)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                            DELETE FROM PostTag pt
+                            WHERE @tagId = pt.TagId AND @postId = pt.PostId;
+                        ";
+                    cmd.Parameters.AddWithValue("@tagId", tagId);
+                    cmd.Parameters.AddWithValue("@postId", postId);
+                    cmd.ExecuteNonQuery();
+                }
             }
         }
     }
+}
 
 
 

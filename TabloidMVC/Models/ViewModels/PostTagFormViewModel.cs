@@ -12,6 +12,10 @@ namespace TabloidMVC.Models.ViewModels
         public int postId { get; set; }
         public List<Tag> TagOptions { get; set; }
 
-        public List<int> TagIds { get; set; }
+        public List<int> TagIdsToAdd { get; set; }
+
+        public List<int> TagIdsToRemove { get; set; }
+
+        public List<PostTag> TagsToPost { get; set; }
     }
 }

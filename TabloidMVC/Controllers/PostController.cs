@@ -158,11 +158,15 @@ namespace TabloidMVC.Controllers
         public IActionResult AddTagToPost(int id)
         {
             var tags = _tagRepository.GetAllTags();
+            var tagsToPost = _postRepository.GetPostTagsByPostId(id);
+
             PostTagFormViewModel vm = new PostTagFormViewModel()
             {
                 postId = id,
                 TagOptions = tags,
-                TagIds = new List<int>()
+                TagIdsToAdd = new List<int>(),
+                TagIdsToRemove = new List<int>(),
+                TagsToPost = tagsToPost
             };
             return View(vm);
         }

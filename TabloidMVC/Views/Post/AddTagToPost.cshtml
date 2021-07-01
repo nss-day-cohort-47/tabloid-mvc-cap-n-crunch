@@ -22,13 +22,23 @@
         <tbody>
             @foreach (var item in Model.TagOptions)
             {
+                foreach (var postTag in Model.TagsToPost)
+                {
                 <tr>
                     <td>
-
+                        @item.Name
+                        @if(item.Id == postTag.TagId)
+                        {
+                        <a asp-action="AddTagToPost" asp-route-id="@item.Id" name="TagsToRemove" class="btn btn-outline-primary mx-1" title="Delete">
+                            <i class="fas fa-trash"></i></a>
                         @*@Html.DisplayFor(modelItem => item.Name)*@
-                        <input name="TagIds" type="checkbox" value="@item.Id" /> @item.Name
+                        }
+                        else
+                        {
+                        <input name="TagIdsToAdd" type="checkbox" value="@item.Id" />
+                            }
 
-                    </td>
+</td>
                     <td>
                         <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary mx-1" title="View">
                             <i class="fas fa-eye"></i>
@@ -36,11 +46,11 @@
                         @*<a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary mx-1" title="Edit">
                             <i class="fas fa-pencil-alt"></i>
                         </a>*@
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-primary mx-1" title="Delete">
-                            <i class="fas fa-trash"></i>
-                        </a>
+                        
+                        
                     </td>
                 </tr>
+                }
             }
         </tbody>
     </table>
