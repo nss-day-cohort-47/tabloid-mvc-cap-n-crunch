@@ -96,8 +96,9 @@ namespace TabloidMVC.Controllers
 
         public IActionResult Delete(int id)
         {
+            int currentUser = GetCurrentUserProfileId();
             Post post = _postRepository.GetPublishedPostById(id);
-            if (post.UserProfileId == GetCurrentUserProfileId())
+            if (post.UserProfileId == currentUser)
             {
                 return View(post);
             }
@@ -204,3 +205,8 @@ namespace TabloidMVC.Controllers
 
     }
 }
+//GET
+//list of all tags(object)-TagOptions
+//list of int -Tags to add (empty)- TagIdsToAdd
+//List of int -tags to delete (empty)- TagIdsToRemove
+//list of PostTag -tags have already been selected -TagsToPost
