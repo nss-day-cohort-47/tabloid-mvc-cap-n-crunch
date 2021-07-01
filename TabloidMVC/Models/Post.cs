@@ -26,7 +26,7 @@ namespace TabloidMVC.Models
         public bool IsApproved { get; set; }
 
         [Required]
-        [DisplayName("Category")]
+        [DisplayName("CategoryComponent.razor")]
         public int CategoryId { get; set; }
         public Category Category { get; set; }
 
