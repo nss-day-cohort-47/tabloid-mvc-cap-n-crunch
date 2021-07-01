@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using TabloidMVC.Models;
 using TabloidMVC.Repositories;
@@ -26,8 +27,16 @@ namespace TabloidMVC.Controllers
         //[Authorize]
         public IActionResult Index()
         {
-            List<UserProfile> userProfiles = _userProfileRepository.GetAllProfiles();
-            return View(userProfiles);
+            UserProfile user = GetCurrentUser();
+            if (user.UserTypeId == 1)
+            {
+                List<UserProfile> userProfiles = _userProfileRepository.GetAllProfiles();
+                return View(userProfiles);
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
 
         // GET: UserProfileController/Details/5
@@ -107,6 +116,18 @@ namespace TabloidMVC.Controllers
             {
                 return View();
             }
+        }
+        private int GetCurrentUserProfileId()
+        {
+            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.Parse(id);
+        }
+
+        private UserProfile GetCurrentUser()
+        {
+            int currentUserId = GetCurrentUserProfileId();
+            UserProfile user = _userProfileRepository.GetUserById(currentUserId);
+            return user;
         }
     }
 }
